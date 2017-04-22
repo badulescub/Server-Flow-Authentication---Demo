@@ -40,25 +40,31 @@ export class LoginComponent {
         this.loginFailed = false;
     }
 
+    logout(): void {
+        this.azureService.logout().then(() => {
+            this.router.navigate(['', 'home']);
+        });
+    }
+
     loginWithFacebook(): void {
         
         this.azureService.login('facebook', null).then(() =>
         {
-            this.router.navigate(['/app', 'home']);
+            this.router.navigate(['', 'home']);
         });
     }
 
     loginWithGoogle(): void {
         
         this.azureService.login('google', null).then(() => {
-            this.router.navigate(['/app', 'home']);
+            this.router.navigate(['', 'home']);
         });
     }
 
     loginWithTwitter(): void {
         
         this.azureService.login('twitter', null).then(() => {
-            this.router.navigate(['/app', 'home']);
+            this.router.navigate(['', 'home']);
         });
     }
 
@@ -72,7 +78,7 @@ export class LoginComponent {
 
          this.azureService.login('custom', user)
         .then(() => {
-            this.router.navigate(['/app', 'home']);
+            this.router.navigate(['', 'home']);
         })
         .catch((reason) => {
             console.log(reason);

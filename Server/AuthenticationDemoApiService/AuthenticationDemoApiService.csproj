@@ -155,6 +155,7 @@
   <ItemGroup>
     <Compile Include="App_Start\Startup.MobileApp.cs" />
     <Compile Include="Controllers\CustomAuthController.cs" />
+    <Compile Include="Controllers\SampleDataController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Models\Membership\LoginResult.cs" />
     <Compile Include="Models\Membership\LoginResultUser.cs" />

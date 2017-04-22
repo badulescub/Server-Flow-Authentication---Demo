@@ -1,21 +1,24 @@
+using Microsoft.Azure.Mobile.Server.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace Client.Controllers
 {
-    [Route("api/[controller]")]
-    public class SampleDataController : Controller
+    [Authorize]
+    [MobileAppController]
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
+    public class SampleDataController : ApiController
     {
         private static string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        [HttpGet("[action]")]
-        public IEnumerable<WeatherForecast> WeatherForecasts()
+
+        public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast

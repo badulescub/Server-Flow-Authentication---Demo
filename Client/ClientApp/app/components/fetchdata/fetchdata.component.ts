@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Http } from '@angular/http';
+
+import { AzureService } from '../../services/mobile.service';
 
 @Component({
     selector: 'fetchdata',
@@ -8,11 +9,14 @@ import { Http } from '@angular/http';
 export class FetchDataComponent {
     public forecasts: WeatherForecast[];
 
-    constructor(http: Http) {
-        http.get('/api/SampleData/WeatherForecasts').subscribe(result => {
-            this.forecasts = result.json() as WeatherForecast[];
-        });
-    }
+    constructor(
+        private azureService: AzureService
+    ) {
+        azureService.callServerGet('SampleData').
+            then((response) => {
+                this.forecasts = response.result as WeatherForecast[]
+            });
+    }    
 }
 
 interface WeatherForecast {

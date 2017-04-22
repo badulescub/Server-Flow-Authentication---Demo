@@ -12,21 +12,20 @@ export class AzureAuthenticationUser {
 
 export interface AzureServiceInterface {
     login(type: string, user: AzureAuthenticationUser): Promise<string>;
+    logout(): Promise<any>;
     isLoggedOn(): any;
-    getUserInfo(): any;
+    callServerGet(action: string): Promise<any>;
 }
 
 @Injectable()
 export class AzureService implements AzureServiceInterface {
     private azureServiceClient: any;
-    private backEndUrl: string;
 
     constructor(private http: Http) {
         this.setBackEndUrl('http://authenticationdemoapi.azurewebsites.net');
     }
 
     setBackEndUrl = (url: string): void => {
-        this.backEndUrl = url;
         this.azureServiceClient = new WindowsAzure.MobileServiceClient(url);
     }
 
@@ -68,14 +67,14 @@ export class AzureService implements AzureServiceInterface {
         });
     }
 
-    getUserInfo = (): Observable<any> => {
-        let url = this.backEndUrl + '/.auth/me';
-        let headers = new Headers();
+    logout = (): Promise<any> => {
+        return this.azureServiceClient.logout();
+    }
 
-        headers.append('X-ZUMO-AUTH', this.azureServiceClient.currentUser.mobileServiceAuthenticationToken);
-        return this.http.get(url, { headers: headers })
-            .map(this.extractData)
-            .catch(this.handleError);
+    callServerGet = (action: string): Promise<any> => {
+        return this.azureServiceClient.invokeApi(action, {
+            method: 'GET',
+            crossDomain: true });
     }
 
     private extractData(res: Response) {
