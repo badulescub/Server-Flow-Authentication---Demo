@@ -11,6 +11,7 @@ import { CounterComponent } from './components/counter/counter.component';
 import { LoginComponent } from './components/login/login.component';
 
 import { AzureService } from './services/mobile.service';
+import { RouteActivationGuard } from './common/app.route-guard';
 
 @NgModule({
     bootstrap: [ AppComponent ],
@@ -28,14 +29,15 @@ import { AzureService } from './services/mobile.service';
         RouterModule.forRoot([
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'login', component: LoginComponent },
-            { path: 'home', component: HomeComponent },
-            { path: 'counter', component: CounterComponent },
-            { path: 'fetch-data', component: FetchDataComponent },
-            { path: '**', redirectTo: 'home' }
+            { path: 'home', component: HomeComponent, canActivate: [RouteActivationGuard] },
+            { path: 'counter', component: CounterComponent, canActivate: [RouteActivationGuard] },
+            { path: 'fetch-data', component: FetchDataComponent, canActivate: [RouteActivationGuard] },
+            { path: '**', redirectTo: 'login' }
         ])
     ],
     providers: [
-        AzureService
+        AzureService,
+        RouteActivationGuard
     ]
 })
 export class AppModule {

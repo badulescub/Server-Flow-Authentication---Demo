@@ -24,7 +24,6 @@ export class LoginComponent {
     private azureService: AzureService
   ) {
       this.buildForm();
-      this.azureService.setBackEndUrl('http://authenticationdemoapi.azurewebsites.net');
     }
 
     buildForm(): void {

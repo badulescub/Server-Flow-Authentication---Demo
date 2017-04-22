@@ -21,7 +21,9 @@ export class AzureService implements AzureServiceInterface {
     private azureServiceClient: any;
     private backEndUrl: string;
 
-    constructor(private http: Http) { }
+    constructor(private http: Http) {
+        this.setBackEndUrl('http://authenticationdemoapi.azurewebsites.net');
+    }
 
     setBackEndUrl = (url: string): void => {
         this.backEndUrl = url;
