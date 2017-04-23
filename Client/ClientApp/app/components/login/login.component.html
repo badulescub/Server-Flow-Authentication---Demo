@@ -12,7 +12,7 @@
                   <h4>Angular Asp.Net Core application</h4>
               </header>
 
-              <div class="row">
+              <div class="row" *ngIf="!currentUser">
                   <div class="col-sm-6">
                       <p *ngIf="!loginFailed">
                           Use your email address to sign-in
@@ -41,18 +41,6 @@
                                     Login
                                 </button>
                               </div>
-                          </div>
-
-                          <br />
-                          <br />
-                          <br />
-
-
-                          <div>
-                                <button type="button" class="btn btn-danger pull-right" (click)="logout()">
-                                    <i class="fa fa-sign-in fa-fw"></i>
-                                    Log Out
-                                </button>
                           </div>
                       </form>                      
                   </div>
@@ -84,6 +72,25 @@
                       </div>
                   </div>
               </div>
+
+            <br />
+            <br />
+            <br />
+
+
+            <div *ngIf="currentUser">
+
+                <pre>{{currentUser | json}}</pre>
+
+                <br />
+                <br />
+
+                <button type="button" class="btn btn-danger pull-right" (click)="logout()">
+                    <i class="fa fa-sign-in fa-fw"></i>
+                    Log Out
+                </button>               
+
+            </div>
           </section>
       </div>
     </div>
