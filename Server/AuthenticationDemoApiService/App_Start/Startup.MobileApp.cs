@@ -40,14 +40,7 @@ namespace AuthenticationDemoApiService
                 });
             }
 
-            ConfigureCors(config);
             app.UseWebApi(config);
-        }
-
-        private static void ConfigureCors(HttpConfiguration config)
-        {
-            var cors = new EnableCorsAttribute(origins: "*", headers: "*", methods: "*");
-            config.EnableCors(cors);
         }
     }
 }

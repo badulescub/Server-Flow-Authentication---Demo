@@ -22,26 +22,22 @@ export class AzureService implements AzureServiceInterface {
     private azureServiceClient: any;
 
     constructor(private http: Http) {
-        this.setBackEndUrl('http://authenticationdemoapi.azurewebsites.net');
-    }
-
-    setBackEndUrl = (url: string): void => {
-        this.azureServiceClient = new WindowsAzure.MobileServiceClient(url);
+        this.azureServiceClient = new WindowsAzure.MobileServiceClient('https://authenticationdemoapi.azurewebsites.net');
     }
 
     isLoggedOn = (): any => {
         return this.azureServiceClient.currentUser;
     }
 
-    login = (type: string, user: AzureAuthenticationUser): Promise<string> => {
+    login = (loginType: string, user: AzureAuthenticationUser): Promise<string> => {
 
         return new Promise((resolve, reject) => {
-            switch (type.toLowerCase()) {
+            switch (loginType.toLowerCase()) {
                 case 'facebook':
                 case 'google':
                 case 'twitter':
 
-                    this.azureServiceClient.login(type).done(results => {
+                    this.azureServiceClient.login(loginType).done(results => {
                         console.log(results);
                         resolve(results.userId);
                     }, err => {
@@ -51,7 +47,7 @@ export class AzureService implements AzureServiceInterface {
                     break;
                 case 'custom':
 
-                    this.azureServiceClient.login(type, user).done(results => {
+                    this.azureServiceClient.login(loginType, user).done(results => {
                         console.log(results);
                         resolve(results.userId);
                     }, err => {
@@ -60,7 +56,7 @@ export class AzureService implements AzureServiceInterface {
                     });
                     break;
                 default:
-                    console.log('Error: not implemented login request: ' + type);
+                    console.log('Error: not implemented login request: ' + loginType);
                     reject("Unknown login method");
                     break;
             }
@@ -81,6 +77,7 @@ export class AzureService implements AzureServiceInterface {
         let body = res.json();
         return body.data || {};
     }
+
     private handleError(error: Response | any) {
         // In a real world app, we should use remote logging infrastructure
         let errMsg: string;

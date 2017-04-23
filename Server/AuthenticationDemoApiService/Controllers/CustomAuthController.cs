@@ -4,105 +4,60 @@ using System.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Web.Http;
 using Microsoft.Azure.Mobile.Server.Login;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace AuthenticationDemoApiService.Controllers
 {
     [Route(".auth/login/custom")]
     public class CustomAuthController : ApiController
     {
-        [HttpPost, HttpOptions]
-        public IHttpActionResult Post([FromBody] UserLoginModel user)
+        private const string AuthSigningKeyVariableName = "WEBSITE_AUTH_SIGNING_KEY";
+        private const string HostNameVariableName = "WEBSITE_HOSTNAME";
+        private string TokenSigningKey => Environment.GetEnvironmentVariable(AuthSigningKeyVariableName) ?? ConfigurationManager.AppSettings["SigningKey"];
+        public string WebsiteHostName => Environment.GetEnvironmentVariable(HostNameVariableName) ?? "localhost";
+
+        [HttpPost]
+        public IHttpActionResult Post([FromBody] JObject authCredentials)
         {
-//            var telemetry = new TelemetryClient();
-            try
+            var authResult = AuthenticateCredentials(authCredentials.ToObject<UserLoginModel>());
+
+            if (authResult == null)
             {
-                // telemetry.TrackEvent("AUTHENTICATE", new Dictionary<string, string> {{"UserName", user?.UserName}});
-                if (string.IsNullOrEmpty(user?.UserName) || string.IsNullOrEmpty(user.Password))
-                {
-                    return BadRequest();
-                }
-
-                var memberUser = IsValidUser(user);
-                if (memberUser == null)
-                {
-                    return Unauthorized();
-                }
-                var claims = new[]
-                {
-                    new Claim(JwtRegisteredClaimNames.Sub, memberUser.UserId.ToString())
-                };
-
-                var token = JwtSecurityToken(claims);
-                if (token == null)
-                {
-                    // telemetry.TrackDependency("JWT", "TOKEN", DateTimeOffset.UtcNow, new TimeSpan(), false);
-                    return Unauthorized();
-                }
-
-                return Ok(new LoginResult
-                {
-                    AuthenticationToken = token.RawData,
-                    User = new LoginResultUser {UserId = user.UserName}
-                });
-            }
-            catch 
-            {
-                // telemetry.TrackException(ex);
                 return Unauthorized();
             }
+
+            var token = GetJwtSecurityToken(authResult);
+
+            return Ok(new LoginResult { AuthenticationToken = token.RawData, User = authResult });
         }
 
-        private static JwtSecurityToken JwtSecurityToken(Claim[] claims)
+        private JwtSecurityToken GetJwtSecurityToken(LoginResultUser user)
         {
-            var signingKey = GenerateSigningKey();
+            IEnumerable<Claim> claims = GetAccountClaims(user);
+            string websiteUri = $"https://{WebsiteHostName}/";
 
-            var website = Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME");
-
-            var audience = $"https://{website}/";
-            var issuer = $"https://{website}/";
-            if (string.IsNullOrEmpty(website))
-            {
-                audience = ConfigurationManager.AppSettings["ValidAudience"];
-                issuer = ConfigurationManager.AppSettings["ValidIssuer"];
-            }
-
-            try
-            {
-                var token = AppServiceLoginHandler.CreateToken(claims, signingKey, audience, issuer, TimeSpan.FromDays(30));
-                return token;
-            }
-            catch (Exception ex)
-            {
-                //telemetry.TrackException(ex, new Dictionary<string, string>
-                //{
-                //    { "KEY", signingKey },
-                //    { "WEBSITE", website },
-                //    { "AUDIENCE", audience },
-                //    { "ISSUER", issuer }
-                //});
-                throw ex;
-            }
+            return AppServiceLoginHandler
+                .CreateToken(claims, TokenSigningKey, websiteUri, websiteUri, TimeSpan.FromDays(30));
         }
 
-        private LoginResultUser IsValidUser(UserLoginModel user)
+        private LoginResultUser AuthenticateCredentials(UserLoginModel credentials)
         {
-            var memberUser = new LoginResultUser {
-                UserId = Guid.NewGuid().ToString()
-            };
-            
+            //validate user against db, or service here
 
-            //Use Your own database, table storage, json, config, way
-            if ("pass" == user.Password)
-            {
-                return memberUser;
-            }
+            var user = new LoginResultUser { UserId = Guid.NewGuid().ToString(), Email = "test@email.com", FirstName = "Sandbox", LastName = "User" };
 
-            return null;
+            var sucess = (credentials.UserName == user.Email && credentials.Password == "pass"); //dummy validation
+
+            return sucess ? user : null;
         }
 
-        private static string GenerateSigningKey() {
-            var g = Guid.NewGuid();
-            return Convert.ToBase64String(g.ToByteArray());            
-        }
+        private IEnumerable<Claim> GetAccountClaims(LoginResultUser user) => new Claim[]
+         {
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserId),
+                new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
+                new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
+                new Claim(JwtRegisteredClaimNames.NameId, user.Email)
+         };
     }
 }

@@ -6,5 +6,8 @@ namespace AuthenticationDemoApiService.Controllers
     {
         [JsonProperty(PropertyName = "userId")]
         public string UserId { get; set; }
+        public string Email { get; internal set; }
+        public string FirstName { get; internal set; }
+        public string LastName { get; internal set; }
     }
 }
