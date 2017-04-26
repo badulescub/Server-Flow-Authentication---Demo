@@ -1,4 +1,6 @@
-# Demo
+# Server Flow Authentication Demo
+Things I wish I knew when I started. Not production-ready code.
+
 Azure Mobile App authentication demo - Asp.Net Core client + Angular 2
 
 -----------------------------------------------
@@ -6,7 +8,7 @@ Azure Mobile App authentication demo - Asp.Net Core client + Angular 2
 Server Side - Azure Mobile App
 
 Azure Mobile App Settings:
-https://github.com/Microsoft/azure-docs/blob/master/articles/app-service-mobile/app-service-mobile-dotnet-backend-how-to-use-server-sdk.md#custom-auth​
+https://github.com/Microsoft/azure-docs/blob/master/articles/app-service-mobile/app-service-mobile-dotnet-backend-how-to-use-server-sdk.md#custom-auth
 
 Server Flow Authentication can be tested
 MobileAppUrl/.auth/login/<provider>
@@ -49,6 +51,7 @@ Open Source Development
 https://github.com/azure
 
 
+---
 
 My Blog:
 http://bogdan.bynapse.com/category/azure
