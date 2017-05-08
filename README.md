@@ -4,6 +4,8 @@ Things I wish I knew when I started. Not production-ready code.
 Azure Mobile App authentication demo - Asp.Net Core client + Angular 2
 
 -----------------------------------------------
+Make sure to restore NuGet packages on both projects and execute npm install on the client project.
+-----------------------------------------------
 
 Server Side - Azure Mobile App
 
