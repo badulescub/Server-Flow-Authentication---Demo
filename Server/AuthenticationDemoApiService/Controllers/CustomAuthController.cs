@@ -47,9 +47,9 @@ namespace AuthenticationDemoApiService.Controllers
 
             var user = new LoginResultUser { UserId = Guid.NewGuid().ToString(), Email = "test@email.com", FirstName = "Sandbox", LastName = "User" };
 
-            var sucess = (credentials.UserName == user.Email && credentials.Password == "pass"); //dummy validation
+            var success = (credentials.UserName == user.Email && credentials.Password == "pass"); //dummy validation
 
-            return sucess ? user : null;
+            return success ? user : null;
         }
 
         private IEnumerable<Claim> GetAccountClaims(LoginResultUser user) => new Claim[]
