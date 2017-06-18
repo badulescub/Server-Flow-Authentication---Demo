@@ -22,7 +22,7 @@ export class AzureService implements AzureServiceInterface {
     private azureServiceClient: any;
 
     constructor(private http: Http) {
-        this.azureServiceClient = new WindowsAzure.MobileServiceClient('http://authenticationdemoapi.azurewebsites.net/');
+        this.azureServiceClient = new WindowsAzure.MobileServiceClient('https://authenticationdemoapi.azurewebsites.net/');
     }
 
     isLoggedOn = (): any => {
